@@ -34,6 +34,22 @@ def nw(seq1: str, seq2: str, match: int=1, indel: int=0):
         plt.yticks(range(-(len(seq1)+1), 0), [""] + list(seq1), fontsize=8)
         plt.title("Caminho de Peso Maximo no Grafo")
         plt.show()
+    def alignment(path):
+        aligned_seq1 = []
+        aligned_seq2 = []
+
+        for (i1, j1), (i2, j2) in zip(path[:-1], path[1:]):
+            if i2 > i1 and j2 > j1:  # Match ou Mismatch
+                aligned_seq1.append(seq1[i1])
+                aligned_seq2.append(seq2[j1])
+            elif i2 > i1:  # Indel em seq2
+                aligned_seq1.append(seq1[i1])
+                aligned_seq2.append('-')
+            elif j2 > j1:  # Indel em seq1
+                aligned_seq1.append('-')
+                aligned_seq2.append(seq2[j1])
+
+        return ''.join(aligned_seq1), ''.join(aligned_seq2)
 
     # Criar o grafo do grid
     G = create_grid(seq1, seq2, match, indel)
@@ -44,12 +60,17 @@ def nw(seq1: str, seq2: str, match: int=1, indel: int=0):
     path, score = max_path(G, start_node, end_node)
     # Desenhar o grafo com o caminho maximo
     draw_max_path(G, path, seq1, seq2)
+    # Alinhamento
+    aligment_seq1, aligment_seq2 = alignment(path)
     # Retorno o caminho e o maximo numero de casamentos (matches)
-    return path, score
+    return path, score, (aligment_seq1, aligment_seq2)
 
 # Exemplo
-seq1 = "ATCGGCTA"
-seq2 = "GCTAACTG"
-path, score = nw(seq1, seq2, match=1, indel=0)
-print("Caminho de Peso Maximo:", path)
-print("Pontuacao Maxima:", score)
+seq1 = "AGTCCATC"
+seq2 = "GGCATTA"
+path, score, alignment = nw(seq1, seq2, match=1, indel=0)
+print("Caminho de peso maximo/melhor alinhamento:", path)
+print("Pontuacao Maxima/numero de casamentos(caso base):", score)
+print("Alinhamento: ")
+print("Seq1:", alignment[0])
+print("Seq2:", alignment[1])

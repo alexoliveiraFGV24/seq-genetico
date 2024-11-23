@@ -34,21 +34,20 @@ def nw(seq1: str, seq2: str, match: int=1, indel: int=0):
         plt.yticks(range(-(len(seq1)+1), 0), [""] + list(seq1), fontsize=8)
         plt.title("Caminho de Peso Maximo no Grafo")
         plt.show()
+    # Funcao que gera o melhor alinhamento
     def alignment(path):
         aligned_seq1 = []
         aligned_seq2 = []
-
         for (i1, j1), (i2, j2) in zip(path[:-1], path[1:]):
-            if i2 > i1 and j2 > j1:  # Match ou Mismatch
+            if i2 > i1 and j2 > j1:
                 aligned_seq1.append(seq1[i1])
                 aligned_seq2.append(seq2[j1])
-            elif i2 > i1:  # Indel em seq2
+            elif i2 > i1:
                 aligned_seq1.append(seq1[i1])
                 aligned_seq2.append('-')
-            elif j2 > j1:  # Indel em seq1
+            elif j2 > j1:
                 aligned_seq1.append('-')
                 aligned_seq2.append(seq2[j1])
-
         return ''.join(aligned_seq1), ''.join(aligned_seq2)
 
     # Criar o grafo do grid

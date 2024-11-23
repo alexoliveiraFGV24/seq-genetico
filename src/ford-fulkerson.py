@@ -38,23 +38,23 @@ def ford_fulkerson(graph: nx.DiGraph, source: str, sink: str):
             if residual_graph.has_edge(v, u):
                 residual_graph[v][u]['capacity'] += flow
             else:
-                residual_graph.add_edge(v, u, capacity=flow, flow=0)
-
+                if flow > 0:  # Apenas adiciona aresta reversa se houver fluxo a ser revertido
+                    residual_graph.add_edge(v, u, capacity=flow, flow=0)
+            
         max_flow += flow
 
     return max_flow, residual_graph
 
-""" tentarei desenvolver uma linha de código para esboçar o grafo em questão, com o intuito de facilitar a visualização """
-def draw_graph(graph: nx.DiGraph):
-    pos = nx.spring_layout(graph)  
-    edge_labels = { 
-        (u, v): f"{data['flow']}/{data['capacity']}" 
-        for u, v, data in graph.edges(data=True) 
+def draw_graph_with_capacities(graph: nx.DiGraph, title="Grafo de Fluxo"):
+    pos = nx.spring_layout(graph)  # Layout para disposição dos nós
+    edge_labels = {
+        (u, v): f"{data['capacity']}" 
+        for u, v, data in graph.edges(data=True)  # Mostra apenas capacidade
     }
     nx.draw(graph, pos, with_labels=True, node_size=350, node_color="lightblue")
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=12)
-    nx.draw_networkx_edges(graph, pos, edge_color="black", arrowstyle="->", arrowsize=15)
-    plt.title("Fluxo em Rede")
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10)
+    nx.draw_networkx_edges(graph, pos, edge_color="gray", arrowstyle="->", arrowsize=10)
+    plt.title(title)
     plt.show()
 
 """ elaborando um caso genérico """
@@ -68,5 +68,4 @@ fonte = 'F'
 sumidouro = 'S'
 max_flow, residual_graph = ford_fulkerson(G, fonte, sumidouro)
 print(f"Fluxo Máximo: {max_flow}")
-print(G.edges())
-draw_graph(residual_graph)
+draw_graph_with_capacities(G, "Rede com as capacidades")
